@@ -1,6 +1,9 @@
 name: "DDN Deployment"
 description: "Deploy to a Hasura DDN environment"
 inputs:
+  hasura-pat:
+    description: "Your PAT, preferably saved as a secret in your repository"
+    required: true
   build_profile:
     description: "The build_profile — including the extension — you wish to use for this deployment"
     required: true
@@ -18,7 +21,7 @@ runs:
         curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/latest/cli-hasura3-linux-amd64 -o hasura3
         chmod +x hasura3
         sudo mv hasura3 /usr/local/bin
-        hasura3 login --pat ${{ secrets.HASURA_PAT }}
+        hasura3 login --pat ${{ inputs.hasura-pat }}
         OUTPUT=$(hasura3 build create --profile ${{ inputs.build_profile }} --description "${{ inputs.build_description }}" --out json)
         BUILD_VERSION=$(echo $OUTPUT | jq -r '.build_version')
         hasura3 build apply --version $BUILD_VERSION
