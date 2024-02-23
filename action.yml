@@ -1,0 +1,25 @@
+name: "DDN Deployment"
+description: "Deploy to a Hasura DDN environment"
+inputs:
+  build_profile:
+    description: "The build_profile — including the extension — you wish to use for this deployment"
+    required: true
+  build_description:
+    description: "A description to alert other users that this build was created using CI/CD"
+    required: true
+    default: "CI/CD via ddn-deployment GitHub Action"
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Create and apply build
+      run: |
+        curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/latest/cli-hasura3-linux-amd64 -o hasura3
+        chmod +x hasura3
+        sudo mv hasura3 /usr/local/bin
+        hasura3 login --pat ${{ secrets.HASURA_PAT }}
+        OUTPUT=$(hasura3 build create --profile ${{ inputs.build_profile }} --description "${{ inputs.build_description }}" --out json)
+        BUILD_VERSION=$(echo $OUTPUT | jq -r '.build_version')
+        hasura3 build apply --version $BUILD_VERSION
+      shell: bash
