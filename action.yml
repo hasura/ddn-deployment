@@ -1,5 +1,8 @@
 name: "DDN Deployment"
 description: "Deploy to a Hasura DDN environment"
+branding:
+  icon: package
+  color: white
 inputs:
   hasura-pat:
     description: "Your PAT, preferably saved as a secret in your repository"
