@@ -31,10 +31,10 @@ In any workflow, add the following step to deploy your Hasura project to Hasura 
 
 ```yaml
 - name: Deploy Hasura to <ENVIRONMENT>
-  uses: hasura/hasura-ddn-deployment@v0.0.1
+  uses: hasura/hasura-ddn-deployment@latest
   with:
     hasura-pat: ${{ secrets.HASURA_PAT }}
-    build-profile: <The build_profile — including the extension — you wish to use for this deployment>
+    supergraph_manifest: <The supergraph_manifest to use for this deployment>
     build-description: <A description to alert other users that this build was created using CI/CD>
 ```
 
@@ -58,15 +58,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Hasura Project
-        uses: hasura/ddn-deployment@0.0.2
+        uses: hasura/ddn-deployment@latest
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
-          build_profile: build-profile-staging.yaml
+          supergraph_manifest: stage.supergraph.hml
           build_description: "This build was created using CI/CD"
 ```
 
-**Note:** The `build-profile-staging.yaml` file should be present in the root of your repository and should also be
-referenced in the `hasura.yaml` file.
+**Note:** The `stage.supergraph.hml` file should be present in the root of your repository and should also be referenced
+in the `hasura.yaml` file.
 
 ### Deploying to a production environment
 
@@ -87,15 +87,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Hasura Project
-        uses: hasura/ddn-deployment@0.0.2
+        uses: hasura/ddn-deployment@latest
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
-          build_profile: build-profile-prod.yaml
+          supergraph_manifest: prod.supergraph.hml
           build_description: "This build was created using CI/CD"
 ```
 
-**Note:** The `build-profile-prod.yaml` file should be present in the root of your repository and should also be
-referenced in the `hasura.yaml` file.
+**Note:** The `prod.supergraph.hml` file should be present in the root of your repository and should also be referenced
+in the `hasura.yaml` file.
 
 ## Resources
 
