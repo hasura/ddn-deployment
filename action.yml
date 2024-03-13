@@ -7,9 +7,10 @@ inputs:
   hasura-pat:
     description: "Your PAT, preferably saved as a secret in your repository"
     required: true
-  build_profile:
-    description: "The build_profile — including the extension — you wish to use for this deployment"
+  supergraph_manifest:
+    description: "The name of the supergraph manifest to use for the build."
     required: true
+    default: "DefaultSupergraphManifest"
   build_description:
     description: "A description to alert other users that this build was created using CI/CD"
     required: true
@@ -21,11 +22,11 @@ runs:
       uses: actions/checkout@v2
     - name: Create and apply build
       run: |
-        curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/latest/cli-hasura3-linux-amd64 -o hasura3
-        chmod +x hasura3
-        sudo mv hasura3 /usr/local/bin
-        hasura3 login --pat ${{ inputs.hasura-pat }}
-        OUTPUT=$(hasura3 build create --profile ${{ inputs.build_profile }} --description "${{ inputs.build_description }}" --out json)
+        curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/latest/cli-hasura3-linux-amd64 -o ddn
+        chmod +x ddn
+        sudo mv ddn /usr/local/bin
+        ddn login --pat ${{ inputs.hasura-pat }}
+        OUTPUT=$(ddn build supergraph --s ${{ inputs.supergraph_manifest }} --description "${{ inputs.build_description }}" --out json)
         BUILD_VERSION=$(echo $OUTPUT | jq -r '.build_version')
-        hasura3 build apply --version $BUILD_VERSION
+        ddn apply supergraph-build $BUILD_VERSION
       shell: bash
