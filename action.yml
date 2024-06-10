@@ -7,20 +7,51 @@ inputs:
   hasura-pat:
     description: "Your PAT, preferably saved as a secret in your repository"
     required: true
-  build_description:
-    description: "A description to alert other users that this build was created using CI/CD"
-    required: false
-    default: "CI/CD via ddn-deployment GitHub Action"
+  hasura-project:
+    description: "The name of your Hasura project"
+    required: true
+  supergraph-path:
+    description: "Path to the supergraph configuration file"
+    required: true
+    default: "./supergraph.yaml"
 runs:
   using: "composite"
   steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Install ddn CLI
+
+    - name: Install dependencies
       run: |
-        curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/v1/get.sh | bash
+        sudo apt-get install jq
+        curl -L http://graphql-engine-cdn.hasura.io/ddn/cli/v2/get.sh | bash
+
     - name: Login to ddn
-      run: ddn login --pat ${{ inputs.hasura-pat }}
+      run: ddn auth login --pat ${{ inputs.hasura-pat }}
+
     - name: Build supergraph manifest
-      run: ddn build supergraph-manifest
-      shell: bash
+      run: ddn supergraph build create --supergraph ${{ inputs.supergraph-path }} --project ${{ inputs.hasura-project }} --description "Build for commit ${{ github.sha }}" --out=json > build_output.json
+
+    - name: Extract URLs from JSON
+      id: extract_urls
+      run: |
+        BUILD_URL=$(jq -r '.build_url' build_output.json)
+        CONSOLE_URL=$(jq -r '.console_url' build_output.json)
+        echo "::set-output name=build_url::$BUILD_URL"
+        echo "::set-output name=console_url::$CONSOLE_URL"
+
+    - name: Add PR comment with build details
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const buildUrl = '${{ steps.extract_urls.outputs.build_url }}';
+          const consoleUrl = '${{ steps.extract_urls.outputs.console_url }}';
+          const prNumber = context.payload.pull_request.number;
+          const commitId = context.sha;
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: prNumber,
+            body: `Supergraph build was successful! 🎉\n\n**Build URL:** [${buildUrl}](${buildUrl})\n**Console URL:** [${consoleUrl}](${consoleUrl})\n**Commit ID:** ${commitId}`
+          });
+        github-token: ${{ secrets.GITHUB_TOKEN }}
