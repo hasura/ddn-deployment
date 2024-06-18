@@ -1,0 +1,19 @@
+name: Test DDN CLI Action
+
+on: [push]
+
+jobs:
+  test-ddn-cli-action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install and Login to DDN CLI
+        uses: ./ # Uses an action in the root directory
+        with:
+          hasura-pat: ${{ secrets.HASURA_PAT }}
+
+      - name: Run a ddn command to check the
+        run: ddn project get --out json
