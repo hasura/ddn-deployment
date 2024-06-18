@@ -17,7 +17,9 @@ runs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Install ddn CLI
+      shell: bash
       run: |
         curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/v1/get.sh | bash
     - name: Login to ddn
+      shell: bash
       run: ddn login --pat ${{ inputs.hasura-pat }}
