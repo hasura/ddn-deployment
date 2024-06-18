@@ -7,20 +7,15 @@ inputs:
   hasura-pat:
     description: "Your PAT, preferably saved as a secret in your repository"
     required: true
-  build_description:
-    description: "A description to alert other users that this build was created using CI/CD"
-    required: false
-    default: "CI/CD via ddn-deployment GitHub Action"
 runs:
   using: "composite"
   steps:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Install ddn CLI
-      run: |
-        curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/v1/get.sh | bash
-    - name: Login to ddn
-      run: ddn login --pat ${{ inputs.hasura-pat }}
-    - name: Build supergraph manifest
-      run: ddn build supergraph-manifest
       shell: bash
+      run: |
+        curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/v2/get.sh | bash
+    - name: Login to ddn
+      shell: bash
+      run: ddn auth login --pat ${{ inputs.hasura-pat }}
