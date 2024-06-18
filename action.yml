@@ -22,4 +22,4 @@ runs:
         curl -L https://graphql-engine-cdn.hasura.io/ddn/cli/v2/get.sh | bash
     - name: Login to ddn
       shell: bash
-      run: ddn login --pat ${{ inputs.hasura-pat }}
+      run: ddn auth login --pat ${{ inputs.hasura-pat }}
