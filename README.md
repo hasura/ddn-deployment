@@ -74,7 +74,7 @@ jobs:
       - name: Build and deploy TS functions and update the connector link
         run: ddn connector build create --connector app/connector/myts/connector.cloud.yaml --target-supergraph supergraph.cloud.yaml --target-connector-link myts --project ${{ secrets.HASURA_PROJECT }}
         
-      - name: Build and deploy TS functions and update the connector link
+      - name: Build supergraph
         run: ddn supergraph build create --supergraph ./supergraph.cloud.yaml --project ${{ secrets.HASURA_PROJECT }} --description "Build for commit ${{ github.sha }}"
 ```
 
@@ -114,7 +114,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
 
-      - name: Build and deploy TS functions and update the connector link
+      - name: Build supergraph
         run: ddn supergraph build create --supergraph ./supergraph.cloud.yaml --project ${{ secrets.HASURA_PROJECT }} --description "Build for commit ${{ github.sha }}" --out=json > build_output.json
 
       - name: Extract URLs from JSON
