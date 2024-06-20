@@ -32,10 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Hasura DDN Build
-        uses: hasura/ddn-deployment@0.0.2
+        uses: hasura/ddn-deployment@2.1.0
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
-          build_description: "This build was created using CI/CD"
 ```
 
 ## Examples
@@ -62,7 +61,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install and Login to DDN CLI
-        uses: hasura/ddn-deployment@0.0.2
+        uses: hasura/ddn-deployment@2.1.0
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
 
@@ -97,7 +96,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install and Login to DDN CLI
-        uses: hasura/ddn-deployment@0.0.2
+        uses: hasura/ddn-deployment@2.1.0
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
 
