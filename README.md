@@ -83,6 +83,10 @@ jobs:
 ![alt text](image.png)
 
 ```yaml
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
   pull_request:
     branches:
@@ -93,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install and Login to DDN CLI
         uses: hasura/ddn-deployment@2.1.0
@@ -122,25 +126,24 @@ jobs:
         run: |
           BUILD_URL=$(jq -r '.build_url' build_output.json)
           CONSOLE_URL=$(jq -r '.console_url' build_output.json)
-          echo "::set-output name=build_url::$BUILD_URL"
-          echo "::set-output name=console_url::$CONSOLE_URL"
+          echo "build_url=$BUILD_URL" >> $GITHUB_ENV
+          echo "console_url=$CONSOLE_URL" >> $GITHUB_ENV
 
       - name: Add PR comment with build details
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
-            const buildUrl = '${{ steps.extract_urls.outputs.build_url }}';
-            const consoleUrl = '${{ steps.extract_urls.outputs.console_url }}';
+            const buildUrl = process.env.build_url;
+            const consoleUrl = process.env.console_url;
             const prNumber = context.payload.pull_request.number;
             const commitId = context.sha;
-            await github.rest.issues.createComment({
+            github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: prNumber,
+              issue_number: context.issue.number,
               body: `Supergraph build was successful! 🎉\n\n**Build URL:** [${buildUrl}](${buildUrl})\n**Console URL:** [${consoleUrl}](${consoleUrl})\n**Commit ID:** ${commitId}`
             });
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Resources
