@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Hasura DDN Build
-        uses: hasura/ddn-deployment@2.1.0
+        uses: hasura/ddn-deployment@2.3.0
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
 ```
