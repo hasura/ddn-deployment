@@ -61,7 +61,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install and Login to DDN CLI
-        uses: hasura/ddn-deployment@2.1.0
+        uses: hasura/ddn-deployment@2.3.0
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
 
@@ -73,12 +73,12 @@ jobs:
 
       - name: Build and deploy TS functions and update the connector link
         run: ddn connector build create --connector app/connector/myts/connector.cloud.yaml --target-supergraph supergraph.cloud.yaml --target-connector-link myts --project ${{ secrets.HASURA_PROJECT }}
-        
+
       - name: Build supergraph
         run: ddn supergraph build create --supergraph ./supergraph.cloud.yaml --project ${{ secrets.HASURA_PROJECT }} --description "Build for commit ${{ github.sha }}"
 ```
 
-### Automatic deployments + comment with build details on the PR 
+### Automatic deployments + comment with build details on the PR
 
 ![alt text](image.png)
 
@@ -94,13 +94,14 @@ on:
 
 jobs:
   deploy:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install and Login to DDN CLI
-        uses: hasura/ddn-deployment@2.1.0
+        uses: hasura/ddn-deployment@2.3.0
         with:
           hasura-pat: ${{ secrets.HASURA_PAT }}
 
@@ -133,6 +134,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const buildUrl = process.env.build_url;
             const consoleUrl = process.env.console_url;
