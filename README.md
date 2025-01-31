@@ -2,15 +2,48 @@
 
 This repository provides everything you need to automate the deployment of a Hasura v3 project on[Hasura DDN](https://hasura.io/ddn). Using GitHub Actions, it simplifies the process of running DDN CLI commands, allowing you to efficiently deploy connectors and build and deploy your supergraph with ease.
 
+## Prerequisites & Process
+
+1. A Hasura account
+2. A personal access or service account access token.
+3. Add the access token as a secret in your repository.
+4. Configure the GitHub Action with the steps you require for your CI/CD pipeline.
+
 ## Prerequisites
 
 ### Hasura Account
 
 A Hasura account is required to use this tool. You can sign up for a free account at [Hasura Cloud](https://console.hasura.io).
 
-### Hasura Personal Access Token (PAT)
+### Hasura Personal Access Token (PAT) or Service Account Access Token
 
-A Hasura Personal Access Token (PAT) is required to authenticate with Hasura Cloud. You can create a PAT from the [`Access Tokens` page of Hasura Cloud](https://cloud.hasura.io/account-settings/access-tokens). **You'll then need to add the following secret to your repository:**
+A Hasura Personal Access Token (PAT) is required to authenticate with Hasura Cloud.
+
+#### Option 1: Creating a PAT in Hasura Cloud
+
+You can create a PAT from the [`Access Tokens` page of Hasura Cloud](https://cloud.hasura.io/account-settings/access-tokens).
+
+#### Option 2: Logging in with the DDN CLI and printing your PAT
+
+You can also log in with the DDN CLI with:
+
+```bash
+ddn auth login
+```
+
+Once that's completed you can print your PAT with:
+
+```bash
+ddn auth print-pat
+```
+
+#### Option 3: Using a Service Account Access Token
+
+You can also use a service account access token to authenticate with Hasura DDN. See here for more information: [Service Accounts](https://hasura.io/docs/3.0/collaboration/service-accounts/)
+
+### Adding the PAT to your repository
+
+You'll then need to add the following secret to your repository:
 
 ```bash
 HASURA_PAT: <your-hasura-pat>
